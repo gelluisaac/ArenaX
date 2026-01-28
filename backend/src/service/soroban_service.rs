@@ -42,6 +42,7 @@ pub struct NetworkConfig {
     pub network_passphrase: String,
     /// Optional friendbot URL for testnet funding
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[allow(dead_code)] // Reserved for future use
     pub friendbot_url: Option<String>,
 }
 
@@ -124,8 +125,6 @@ pub enum SorobanError {
     SerializationError(#[from] serde_json::Error),
     #[error("Invalid account: {0}")]
     InvalidAccount(String),
-    #[error("Invalid contract: {0}")]
-    InvalidContract(String),
     #[error("Retry limit exceeded")]
     RetryLimitExceeded,
 }
@@ -159,6 +158,7 @@ enum RpcResult {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)] // Fields used for deserialization from RPC response
 struct RpcError {
     code: i32,
     message: String,
@@ -167,6 +167,7 @@ struct RpcError {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)] // Fields used for deserialization from RPC response
 struct SimulateResponse {
     #[serde(rename = "transactionData")]
     transaction_data: String,
@@ -183,6 +184,7 @@ struct SimulateResponse {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)] // Fields used for deserialization from RPC response
 struct SendTransactionResponse {
     #[serde(rename = "hash")]
     hash: String,
@@ -195,6 +197,7 @@ struct SendTransactionResponse {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)] // Fields used for deserialization from RPC response
 struct GetTransactionResponse {
     #[serde(rename = "status")]
     status: String,
@@ -420,12 +423,11 @@ impl SorobanService {
                             });
                         }
                         "FAILED" => {
-                            let error_msg = format!("Transaction failed on network");
                             error!(tx_hash = tx_hash, "Transaction failed");
                             return Ok(SorobanTxResult {
                                 hash: tx_hash.to_string(),
                                 status: TxStatus::Failed,
-                                error: Some(error_msg),
+                                error: Some("Transaction failed on network".to_string()),
                             });
                         }
                         "NOT_FOUND" => {
@@ -630,8 +632,8 @@ impl SorobanService {
 mod tests {
     use super::*;
 
-    #[tokio::test]
-    async fn test_network_config() {
+    #[test]
+    fn test_network_config() {
         let testnet = NetworkConfig::testnet();
         assert!(testnet.rpc_url.contains("testnet"));
         assert!(testnet.friendbot_url.is_some());
@@ -673,12 +675,11 @@ mod tests {
         assert_eq!(config.backoff_multiplier, 2.0);
     }
 
-    #[tokio::test]
-    async fn test_soroban_service_creation() {
+    #[test]
+    fn test_soroban_service_creation() {
         let network = NetworkConfig::testnet();
-        let service = SorobanService::new(network);
+        let _service = SorobanService::new(network);
         // Service should be created without errors
-        assert!(true);
     }
 
     #[test]
@@ -807,9 +808,8 @@ mod tests {
             backoff_multiplier: 3.0,
         };
 
-        let service = SorobanService::with_retry_config(network, retry_config);
+        let _service = SorobanService::with_retry_config(network, retry_config);
         // Service should be created without errors
-        assert!(true);
     }
 
     #[test]
