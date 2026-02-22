@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #![no_std]
 
 use soroban_sdk::{Address, Env, Symbol, contract, contractimpl};
@@ -13,8 +14,6 @@ impl ExampleContract {
             panic!("Already initialized");
         }
         env.storage().instance().set(&Symbol::new(&env, "admin"), &admin);
-        // Event: contract initialized with admin
-        // Note: Using simplified event format for compatibility
     }
 
     /// Get the admin address
@@ -26,7 +25,6 @@ impl ExampleContract {
     pub fn set_greeting(env: Env, user: Address, message: Symbol) {
         user.require_auth();
         env.storage().persistent().set(&user, &message);
-        // Event: greeting set for user
     }
 
     /// Get a greeting message
@@ -43,7 +41,6 @@ impl ExampleContract {
         let new_value = current + amount;
 
         env.storage().persistent().set(&key, &new_value);
-        // Event: counter incremented
     }
 
     /// Get the current counter value
@@ -57,6 +54,3 @@ impl ExampleContract {
         Symbol::new(&env, "1.0.0")
     }
 }
-
-// TODO: Add tests when soroban-sdk test environment is properly configured
-// Tests will be implemented once the development environment supports contract testing
